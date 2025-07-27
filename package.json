@@ -4,6 +4,12 @@
   "description": "A minimal template engine supporting {{ variable }}, {% if %}, and {% for %} syntax patterns",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "README.MD",
+    "LICENSE",
+    "package.json"
+  ],
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
