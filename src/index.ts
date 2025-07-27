@@ -1,5 +1,5 @@
 import { tokenize } from './tokenizer';
-import { parse, ASTNode } from './parser';
+import { parse } from './parser';
 import { evaluate, Context } from './evaluator';
 
 export interface TemplateError extends Error {

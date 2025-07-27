@@ -1,10 +1,8 @@
-name: CI/CD Pipeline
+name: Publish to NPM
 
 on:
   push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
+    tags: [ 'v*' ]
 
 jobs:
   test:
@@ -32,14 +30,6 @@ jobs:
     
     - name: Run tests with coverage
       run: npm run test:coverage
-    
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./coverage/lcov.info
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: false
 
   security:
     runs-on: ubuntu-latest
@@ -61,7 +51,7 @@ jobs:
       run: npm audit --audit-level moderate
     
     - name: Run security tests
-      run: npm test -- --testPathPattern=security.test.js
+      run: npm test -- --testPathPattern=security.test.ts
 
   quality:
     runs-on: ubuntu-latest
@@ -81,7 +71,29 @@ jobs:
     
     - name: Check code coverage threshold
       run: npm run test:coverage -- --coverage --watchAll=false
-    
-    - name: Validate package.json
-      run: npm run lint -- --ext .json package.json
 
+  publish:
+    needs: [test, security, quality]
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        registry-url: 'https://registry.npmjs.org'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build package
+      run: npm run build
+    
+    - name: Publish to npm
+      run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

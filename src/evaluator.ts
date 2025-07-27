@@ -38,17 +38,17 @@ export function evaluateNode(node: ASTNode, context: Context): string {
   }
 
   switch (node.type) {
-    case NODE_TYPES.TEXT:
-      return evaluateTextNode(node, context);
+  case NODE_TYPES.TEXT:
+    return evaluateTextNode(node, context);
 
-    case NODE_TYPES.VARIABLE:
-      return evaluateVariable(node, context);
+  case NODE_TYPES.VARIABLE:
+    return evaluateVariable(node, context);
 
-    case NODE_TYPES.IF:
-      return evaluateIfNode(node, context);
+  case NODE_TYPES.IF:
+    return evaluateIfNode(node, context);
 
-    case NODE_TYPES.FOR:
-      return evaluateForNode(node, context);
+  case NODE_TYPES.FOR:
+    return evaluateForNode(node, context);
   }
 }
 
@@ -68,7 +68,7 @@ function evaluateVariable(node: VariableNode, context: Context): string {
   } catch (error) {
     if (error instanceof Error) {
       if (error.message && error.message.includes('dangerous globals')) {
-        throw new EvaluationError(`Access to dangerous globals is not allowed`, node);
+        throw new EvaluationError('Access to dangerous globals is not allowed', node);
       }
       if (error.message && error.message.includes('Invalid expression')) {
         throw new EvaluationError(`Invalid expression: ${node.expression}`, node);
@@ -96,7 +96,7 @@ function evaluateIfNode(node: IfNode, context: Context): string {
     return '';
   } catch (error) {
     if (error instanceof Error && error.message && error.message.includes('dangerous globals')) {
-      throw new EvaluationError(`Access to dangerous globals is not allowed`, node);
+      throw new EvaluationError('Access to dangerous globals is not allowed', node);
     }
     throw new EvaluationError(`Failed to evaluate if condition: ${node.condition}`, node);
   }
@@ -136,7 +136,7 @@ function evaluateForNode(node: ForNode, context: Context): string {
       throw error;
     }
     if (error instanceof Error && error.message && error.message.includes('dangerous globals')) {
-      throw new EvaluationError(`Access to dangerous globals is not allowed`, node);
+      throw new EvaluationError('Access to dangerous globals is not allowed', node);
     }
     throw new EvaluationError(`Failed to evaluate for loop: ${node.iterable}`, node);
   }

@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import { render, tokenize, parse, evaluate } from '../src/index';
+import { render } from '../src/index';
 import { Context } from '../src/evaluator';
 
 describe('Edge Cases and Error Handling', () => {

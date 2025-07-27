@@ -136,7 +136,7 @@ export function parse(tokens: Token[]): ASTNode[] {
     const forExpression = forToken.value;
     
     // Support both "item in items" and "item, index in items" syntax
-    let match = forExpression.match(/^(\w+),\s*(\w+)\s+in\s+(.+)$/);
+    const match = forExpression.match(/^(\w+),\s*(\w+)\s+in\s+(.+)$/);
     let item: string, index: string | undefined, iterable: string;
     
     if (match) {
