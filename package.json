@@ -1,6 +1,6 @@
 {
-  "name": "template-engine",
-  "version": "1.0.0",
+  "name": "@peedief/template-engine",
+  "version": "0.1.0",
   "description": "A minimal template engine supporting {{ variable }}, {% if %}, and {% for %} syntax patterns",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
