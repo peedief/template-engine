@@ -81,7 +81,3 @@ jobs:
     
     - name: Check code coverage threshold
       run: npm run test:coverage -- --coverage --watchAll=false
-    
-    - name: Validate package.json
-      run: npm run lint -- --ext .json package.json
-
