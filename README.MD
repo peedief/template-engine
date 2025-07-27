@@ -13,7 +13,7 @@ A fast, secure, and lightweight template engine for JavaScript/TypeScript that s
 - 🔒 **Secure by Default** - Built-in XSS protection with automatic HTML escaping
 - 📝 **Simple Syntax** - Familiar `{{ variable }}`, `{% if %}`, and `{% for %}` patterns
 - 🎯 **TypeScript First** - Full TypeScript support with comprehensive type definitions
-- 🧪 **Battle Tested** - 95%+ test coverage with comprehensive edge case handling
+- 🧪 **Battle Tested** - 80%+ test coverage with comprehensive edge case handling
 - 🌐 **Zero Dependencies** - No external runtime dependencies
 
 ## Installation
