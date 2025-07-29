@@ -4,6 +4,10 @@
   "description": "A minimal template engine supporting {{ variable }}, {% if %}, and {% for %} syntax patterns",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/peedief/template-engine.git"
+  },
   "files": [
     "dist/",
     "README.MD",
