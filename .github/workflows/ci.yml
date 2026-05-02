@@ -61,7 +61,7 @@ jobs:
       run: npm audit --audit-level moderate
     
     - name: Run security tests
-      run: npm test -- --testPathPattern=security.test.ts
+      run: npm test -- --testPathPatterns=security.test.ts
 
   quality:
     runs-on: ubuntu-latest
