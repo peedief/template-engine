@@ -255,6 +255,7 @@ interface Context {
 ### Conditionals
 - `{% if condition %}...{% endif %}` - Simple conditional
 - `{% if condition %}...{% else %}...{% endif %}` - If-else conditional
+- Numeric dot path segments work in conditions, such as `{% if metric.change.0 === '+' %}`
 
 ### Loops
 - `{% for item in array %}...{% endfor %}` - Iterate over arrays

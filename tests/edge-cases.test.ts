@@ -161,6 +161,18 @@ describe('Edge Cases and Error Handling', () => {
       expect(result).toBe('first second (length: 2)');
     });
 
+    test('should handle numeric string indexes in property paths', () => {
+      const context = {
+        metric: {
+          change: '+18%'
+        }
+      };
+
+      const template = '{{ metric.change.0 }}{{ metric.change.1 }}';
+      const result = render(template, context);
+      expect(result).toBe('+1');
+    });
+
     test('should handle sparse arrays', () => {
       const sparseArray: (string | undefined)[] = [];
       sparseArray[0] = 'first';

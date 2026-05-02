@@ -202,6 +202,29 @@ describe('Utils', () => {
       expect(safeEvaluate('numbers[0]', context)).toBe(1);
     });
 
+    test('should evaluate numeric dot path segments inside comparisons', () => {
+      const context = {
+        metric: {
+          change: '+18%',
+          values: ['first', 'second']
+        }
+      };
+
+      expect(safeEvaluate('metric.change.0 === "+"', context)).toBe(true);
+      expect(safeEvaluate('metric.change.0 === "-"', context)).toBe(false);
+      expect(safeEvaluate('metric.values.1 === "second"', context)).toBe(true);
+    });
+
+    test('should preserve decimal numbers and string literals when normalizing numeric paths', () => {
+      const context = {
+        metric: { change: '+18%' },
+        threshold: 1
+      };
+
+      expect(safeEvaluate('threshold === 1.0', context)).toBe(true);
+      expect(safeEvaluate('metric.change.0 === "+" && "version.0" === "version.0"', context)).toBe(true);
+    });
+
     test('should handle complex conditional logic', () => {
       const context = {
         user: { age: 25, isVerified: true, role: 'admin' },

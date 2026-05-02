@@ -63,6 +63,10 @@ export function get(object: any, path: string): any {
         result = result.length;
         continue;
       }
+      if (typeof result === 'string' && /^\d+$/.test(key)) {
+        result = result[Number(key)];
+        continue;
+      }
       if (Array.isArray(result) && key === 'length') {
         result = result.length;
         continue;
@@ -106,6 +110,96 @@ const DANGEROUS_PATTERNS = [
 
 export function safeEvaluate(expression: string, context: Record<string, any>): any {
   return evaluateExpression(expression, context);
+}
+
+function normalizeNumericPathSegments(expression: string): string {
+  let result = '';
+  let quote: string | null = null;
+  let escaped = false;
+
+  for (let i = 0; i < expression.length; i++) {
+    const char = expression[i];
+
+    if (quote) {
+      result += char;
+
+      if (escaped) {
+        escaped = false;
+      } else if (char === '\\') {
+        escaped = true;
+      } else if (char === quote) {
+        quote = null;
+      }
+
+      continue;
+    }
+
+    if (char === '\'' || char === '"' || char === '`') {
+      quote = char;
+      result += char;
+      continue;
+    }
+
+    if (char === '.' && shouldNormalizeNumericPathSegment(expression, i)) {
+      let numberEnd = i + 1;
+      while (numberEnd < expression.length && /\d/.test(expression[numberEnd])) {
+        numberEnd++;
+      }
+
+      result += `[${expression.slice(i + 1, numberEnd)}]`;
+      i = numberEnd - 1;
+      continue;
+    }
+
+    result += char;
+  }
+
+  return result;
+}
+
+function shouldNormalizeNumericPathSegment(expression: string, dotIndex: number): boolean {
+  const nextChar = expression[dotIndex + 1];
+  if (!nextChar || !/\d/.test(nextChar)) {
+    return false;
+  }
+
+  const previousChar = expression[dotIndex - 1];
+  if (!previousChar) {
+    return false;
+  }
+
+  if (previousChar !== ']' && !/[a-zA-Z0-9_$]/.test(previousChar)) {
+    return false;
+  }
+
+  const numberEnd = findNumericPathSegmentEnd(expression, dotIndex + 1);
+  const charAfterNumber = expression[numberEnd];
+  if (charAfterNumber && !/[\s.[\])!<>=+\-*/%&|?:,;]/.test(charAfterNumber)) {
+    return false;
+  }
+
+  if (previousChar === ']') {
+    return true;
+  }
+
+  const previousToken = getPreviousIdentifierToken(expression, dotIndex);
+  return previousToken.length > 0 && !/^\d+$/.test(previousToken);
+}
+
+function findNumericPathSegmentEnd(expression: string, start: number): number {
+  let end = start;
+  while (end < expression.length && /\d/.test(expression[end])) {
+    end++;
+  }
+  return end;
+}
+
+function getPreviousIdentifierToken(expression: string, dotIndex: number): string {
+  let start = dotIndex - 1;
+  while (start >= 0 && /[a-zA-Z0-9_$]/.test(expression[start])) {
+    start--;
+  }
+  return expression.slice(start + 1, dotIndex);
 }
 
 export function evaluateExpression(expression: string, context: Record<string, any>): any {
@@ -159,6 +253,8 @@ export function evaluateExpression(expression: string, context: Record<string, a
   }
   
   try {
+    const normalizedExpression = normalizeNumericPathSegments(expression);
+
     // For complex expressions, use controlled evaluation
     // Build variable declarations for safe context access
     const safeKeys: string[] = [];
@@ -178,7 +274,7 @@ export function evaluateExpression(expression: string, context: Record<string, a
     const funcCode = `
       if (ctx == null) return undefined;
       ${declarations}
-      return ${expression};
+      return ${normalizedExpression};
     `;
     
     const func = new Function('ctx', 'get', funcCode);

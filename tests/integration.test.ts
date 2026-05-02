@@ -338,6 +338,36 @@ describe('Integration Tests', () => {
       expect(result).toContain('New user registered');
       expect(result).toContain('by John Doe');
     });
+
+    test('should render conditions that compare numeric dot path segments', () => {
+      const template = `
+        {% for metric in metrics %}
+          {% if metric.change.0 === '+' %}
+            <span class="trend-up">{{ metric.change }}</span>
+          {% else %}
+            {% if metric.change.0 === '-' %}
+              <span class="trend-down">{{ metric.change }}</span>
+            {% else %}
+              <span class="trend-neutral">{{ metric.change }}</span>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      `.trim();
+
+      const context = {
+        metrics: [
+          { label: 'Revenue', value: '$128,450', change: '+18%' },
+          { label: 'Open Risks', value: '3', change: '-2' },
+          { label: 'Retention', value: '94%', change: '0%' }
+        ]
+      };
+
+      const result = render(template, context);
+
+      expect(result).toContain('<span class="trend-up">+18%</span>');
+      expect(result).toContain('<span class="trend-down">-2</span>');
+      expect(result).toContain('<span class="trend-neutral">0%</span>');
+    });
   });
 
   describe('Performance Tests', () => {
