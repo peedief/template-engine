@@ -10,7 +10,7 @@ jobs:
     
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x]
+        node-version: [20.x, 22.x, 24.x]
     
     steps:
     - name: Checkout code
@@ -51,7 +51,7 @@ jobs:
       run: npm audit --audit-level moderate
     
     - name: Run security tests
-      run: npm test -- --testPathPattern=security.test.ts
+      run: npm test -- --testPathPatterns=security.test.ts
 
   quality:
     runs-on: ubuntu-latest
